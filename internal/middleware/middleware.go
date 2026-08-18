@@ -18,12 +18,12 @@ func RequestID(ids identity.Generator) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			incoming := r.Header.Get("X-Request-ID")
-			id := ids.NewID("req")
-			if incoming != "" {
+			id := incoming
+			if id == "" {
 				id = ids.NewID("req")
 			}
 			if id == "" {
-				id = incoming
+				id = "req-unknown"
 			}
 			ctx := context.WithValue(r.Context(), requestIDKey, id)
 			w.Header().Set("X-Request-ID", id)
